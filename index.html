@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Project 1441</title>
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+  </head>
+  <body>
+
+<embed
+  target="http://localhost:3000/video.avi"
+  type="application/x-vlc-plugin"
+  autoplay="no"
+  loop="no"
+  width="800"
+  height="600"
+  controls="false"
+  branding="no"
+ />
+<br />
+<button onclick="$('embed')[0].audio.toggleMute();">Mute/Unmute</button>
+
+  </body>
+</html>
