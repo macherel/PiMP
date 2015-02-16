@@ -20,6 +20,12 @@ app.get('/', function(req, res){
 app.get('/main.js', function(req, res){
 	res.sendFile('main.js', wwwOptions);
 });
+app.get('/style.css', function(req, res){
+	res.sendFile('style.css', wwwOptions);
+});
+app.get('/configuration.json', function(req, res){
+	res.sendFile('configuration.json', wwwOptions);
+});
 // Resources
 var options = { root: __dirname + '/data/' };
 app.get('/:file', function(req, res){
@@ -28,16 +34,4 @@ app.get('/:file', function(req, res){
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');
-});
-
-io.on('connection', function(socket){
-	console.log('webpage connected');
-
-	socket.on('ready', function(msg){
-		console.log('webpage ready');
-	});
-
-	socket.on('disconnect', function(){
-		console.log('webpage disconnected');
-	});
 });
