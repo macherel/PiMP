@@ -1,0 +1,12 @@
+#gallery {
+
+}
+
+#gallery > div {
+	float: left;
+	width: 49%;
+}
+
+#player {
+	display: none;	
+}
