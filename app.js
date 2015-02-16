@@ -1,6 +1,7 @@
-var app    = require('express')();
-var http   = require('http').Server(app);
-var io     = require('socket.io')(http);
+var app     = require('express')();
+var http    = require('http').Server(app);
+var io      = require('socket.io')(http);
+var trigger = require('./keyboard-trigger');
 
 // Handlers
 app.all('*', function(req, res, next) {
@@ -34,4 +35,21 @@ app.get('/:file', function(req, res){
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');
+});
+
+io.on('connection', function(socket){
+	console.log('webpage connected');
+
+	trigger.on('trigger', function(id) {
+		console.log("trigger", id);
+		socket.emit('start', id);
+	});
+
+	socket.on('ready', function(msg){
+		console.log('webpage ready');
+	});
+
+	socket.on('disconnect', function(){
+		console.log('webpage disconnected');
+	});
 });
