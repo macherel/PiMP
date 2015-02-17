@@ -1,12 +1,21 @@
-#gallery {
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
 
+#gallery {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
 }
 
 #gallery > div {
-	float: left;
-	width: 49%;
+	flex: 0 0 auto;
+	width: 48%;
+	text-align: center;
 }
 
 #player {
-	display: none;	
+	display: none;
 }

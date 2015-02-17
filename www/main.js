@@ -46,6 +46,6 @@ $(function() {
 	$.get( "configuration.json", configure, "json");
 
 	// listen commands on websocket
-	//var socket = io();
-	//socket.on('start', start);
+	var socket = io();
+	socket.on('start', start);
 });
