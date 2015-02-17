@@ -24,17 +24,45 @@ function start(id) {
 	console.log('command >start< received', id);
 	if(!!VIDEOS[id]) {
 		var video = VIDEOS[id];
-		var player = $('embed')[0];
 		console.log('playing video', video);
+
+		var player = $('#player')[0];
 		$("#gallery").hide();
-		$("embed").css('display', 'block'); // $("embed").show() doesn't work
+		/*
+		 * Player MUST be visible before use api.
+		 * $("#player").show() doesn't work.
+		 */
+		$("#player").css('display', 'block');
 		player.playlist.stop();
 		player.playlist.clear();
 		player.playlist.add(video.url);
+		/*
+		 * When reach end of playlist
+		 */
 		player.playlist.play();
+		/*
+		 * video need to be played for changing fullscreen mode
+		 */
+		player.addEventListener("MediaPlayerEndReached", stop, false);
+		player.video.fullscreen=true;
 	} else {
 		console.log('video does not exists', id);
 	}
+}
+
+function stop() {
+	var player = $('#player')[0];
+	//$("#player").css('display', 'block');
+
+	/*
+	 * video need to be played for changing fullscreen mode
+	 */
+	player.video.fullscreen=false;
+	//player.playlist.stop();
+	player.playlist.clear();
+	player.removeEventListener("MediaPlayerEndReached", stop, false);
+	$("#player").hide();
+	$("#gallery").show();
 }
 
 /*
