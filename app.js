@@ -21,11 +21,11 @@ app.get('/', function(req, res){
 app.get('/main.js', function(req, res){
 	res.sendFile('main.js', wwwOptions);
 });
+app.get('/socket.io-1.3.3.js', function(req, res){
+	res.sendFile('socket.io-1.3.3.js', wwwOptions);
+});
 app.get('/style.css', function(req, res){
 	res.sendFile('style.css', wwwOptions);
-});
-app.get('/configuration.json', function(req, res){
-	res.sendFile('configuration.json', wwwOptions);
 });
 // Resources
 var options = { root: __dirname + '/data/' };

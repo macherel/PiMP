@@ -3,21 +3,21 @@
 		{
 			"id": "1",
 			"url": "dizzy.mp4",
-			"name": "Le chat et le rayon de lumière",
+			"title": "Le chat et le rayon de lumière",
 			"description": "Dans cette vidéo un chat court après un rayon de lumière projeté par son maitre.",
 			"thumbnail": "dizzy.jpg"
 		},
 		{
 			"id": "2",
 			"url": "windowsill.webm",
-			"name": "Essai de vidéo en webm",
+			"title": "Essai de vidéo en webm",
 			"description": "Il s'agit d'une vidéo d'essai dans le format webm afin de démonter le fonctionnement de l'HTML 5.",
 			"thumbnail": "windowsill.jpg"
 		},
 		{
 			"id": "3",
 			"url": "devstories.webm",
-			"name": "Dev Stories",
+			"title": "Dev Stories",
 			"description": "",
 			"thumbnail": "devstories.jpg"
 		}
