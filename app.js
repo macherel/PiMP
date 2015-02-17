@@ -1,6 +1,9 @@
-var app     = require('express')();
+var express = require('express');
+var app     = express();
 var http    = require('http').Server(app);
+var path    = require('path');
 var io      = require('socket.io')(http);
+
 var trigger = require('./keyboard-trigger');
 
 // Handlers
@@ -28,10 +31,14 @@ app.get('/style.css', function(req, res){
 	res.sendFile('style.css', wwwOptions);
 });
 // Resources
-var options = { root: __dirname + '/data/' };
+/*var options = { root: __dirname + '/data/' };
 app.get('/:file', function(req, res){
+    console.log(req.params.file);
 	res.sendFile(req.params.file, options);
-});
+});*/
+
+app.use(express.static(path.join(__dirname, 'data')));
+
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');

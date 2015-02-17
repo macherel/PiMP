@@ -40,10 +40,8 @@ function start(id) {
 		currentPlayedVideo = videos[id];
 		console.log('playing video', currentPlayedVideo);
 
-		var gallery = document.getElementById(GALLERY_ID);
 		var player = document.getElementById(PLAYER_ID);
-		gallery.style.display = 'none';
-		player.style.display = 'block';
+		showPlayer();
 		player.playlist.stop();
 		player.playlist.clear();
 		player.playlist.add(currentPlayedVideo.url);
@@ -51,6 +49,7 @@ function start(id) {
 		 * When reach end of playlist
 		 */
 		player.playlist.play();
+        player.input.position = 0.9; /* only for tests ; TO BE REMOVED !!!!!!!!!!!!!!!!! */
 		/*
 		 * video need to be played for changing fullscreen mode
 		 */
@@ -62,7 +61,6 @@ function start(id) {
 }
 
 function stop() {
-	var gallery = document.getElementById(GALLERY_ID);
 	var player = document.getElementById(PLAYER_ID);
 
 	/*
@@ -72,15 +70,39 @@ function stop() {
 	//player.playlist.stop();
 	player.playlist.clear();
 	player.removeEventListener("MediaPlayerEndReached", stop, false);
-	gallery.style.display = 'block';
-	player.style.display = 'none';
+    hidePlayer();
 	currentPlayedVideo = undefined;
+}
+
+/*
+ * Hide page content and show player
+ */
+function showPlayer() {
+    for(let element of document.body.children) {
+        if(element.id != PLAYER_ID) {
+            element.setAttribute('data-display', element.style.display);
+            element.style.display = 'none';
+        }
+    }
+    document.getElementById(PLAYER_ID).style.display = 'block';
+}
+
+/*
+ * Hide player and re-display page content
+ */
+function hidePlayer() {
+    document.getElementById(PLAYER_ID).style.display = 'none';
+    for(let element of document.body.children) {
+        if(element.id != PLAYER_ID) {
+            element.style.display = element.getAttribute('data-display');
+        }
+    }
 }
 
 /*
  * On document ready
  */
-document.addEventListener("DOMContentLoaded", function(event) { 
+document.addEventListener("DOMContentLoaded", function(event) {
 
 	// Reading configuration file (configuration.json)
     var httpRequest = new XMLHttpRequest();
@@ -94,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	            }
 	        }
 	    };
-	    httpRequest.open('GET', "configuration.json", true);
+	    httpRequest.open('GET', "/configuration.json", true);
 	    httpRequest.send(null);
     } else {
     	console.log('unable to create ajax request to load configuration file')
@@ -103,4 +125,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	// listen commands on websocket
 	var socket = io();
 	socket.on('start', start);
+	socket.on('stop', stop);
+	//socket.on('pause', pause);
 });
