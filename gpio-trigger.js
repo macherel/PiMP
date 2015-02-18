@@ -1,17 +1,27 @@
 var util         = require('util');
 var EventEmitter = require('events').EventEmitter;
-var wpi          = require('wiring-pi');
+var gpio         = require('gpio');
 
 function GpioTrigger() {
 	var trigger = this;
 	EventEmitter.call(this);
 
-	wpi.setup('wpi');
-	wpi.pinMode(7, wpi.INPUT);
-	wpi.pullUpDnControl(7, wpi.PUD_UP);
-	wpi.wiringPiISR(7, wpi.INT_EDGE_FALLING, function(delta) {
-		console.log('Pin 7 changed to LOW (', delta, ')');
-	});
+	var pins = [ 17, 27, 22 ];
+	var gpios = [];
+
+	for(var i=0; i<pins.length; i++) {
+		var pin = pins[i];
+		var tmp = gpio.export(pin, {
+			direction: 'in',
+			ready: function() {
+				console.log('GPIO'+this.headerNum+'ready.')
+				tmp.on('change', function(value) {
+					if(!!value) trigger.emit('trigger', pins.indexOf(this.headerNum)+1);
+				});
+			}
+		});
+		gpios.push(tmp);
+	}
 }
 
 util.inherits(GpioTrigger, EventEmitter);
