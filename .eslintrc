@@ -1,0 +1,14 @@
+{
+  "ecmaFeatures": {
+	"blockBindings": true,
+	"forOf": true,
+	"templateStrings": true
+  },
+  "env": {
+	"browser": true,
+	"amd": true,
+	"jasmine": true,
+	"jquery": true,
+	"node": true
+  }
+}

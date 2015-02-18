@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var app     = express();
 var http    = require('http').Server(app);
@@ -42,7 +44,7 @@ app.get('/gallery.ui.css', function(req, res){
 // Resources
 /*var options = { root: __dirname + '/data/' };
 app.get('/:file', function(req, res){
-    console.log(req.params.file);
+	console.log(req.params.file);
 	res.sendFile(req.params.file, options);
 });*/
 
