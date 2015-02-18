@@ -1,18 +1,13 @@
 # Tedimage38
 
+Tedimage38 is a mini media player that can accept different input types.
+Its purpose is to allow the video display, simply and faster in some contexts :
+  - conferences
+  - museums
+  - trade fairs
+  - ...
+Currently, it handle inputs from keyboard or physical button connected to the ports of a RaspberryPi (GPIO), but its architecture makes it easy to add almost any type of input.
 
-
-Todo List:
-
-  - implements "play,pause,stop,next,previous" commands
-  - gallery be more responsive
-  - not use anymore socket.io
-  - add page options (title, desc, background, gallery on/off)
-  - switch between vlc plugin and html video tag
-  - support Raspberry Pi GPIOs
-  - choose nodejs version
-  - add configuration for inputs (keyboard, GPIOs, ...)
 
 Scrum board
-
 http://scrumy.com/fridaycodingnight
