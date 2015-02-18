@@ -14,11 +14,12 @@ function GpioTrigger() {
 		var tmp = gpio.export(pin, {
 			direction: 'in',
 			ready: function() {
-				console.log('GPIO'+this.headerNum+'ready.')
-				tmp.on('change', function(value) {
-					if(!!value) trigger.emit('trigger', pins.indexOf(this.headerNum)+1);
-				});
+				console.log('GPIO' + this.headerNum + ' ready.')
 			}
+		});
+		tmp.on('change', function(value) {
+			console.log('GPIO' + this.headerNum + " changed : " + value)
+			if(!!value) trigger.emit('trigger', pins.indexOf(this.headerNum)+1);
 		});
 		gpios.push(tmp);
 	}
