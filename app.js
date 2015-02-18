@@ -21,14 +21,23 @@ var wwwOptions = { root: __dirname + '/www/' };
 app.get('/', function(req, res){
 	res.sendFile('index.html', wwwOptions);
 });
-app.get('/main.js', function(req, res){
-	res.sendFile('main.js', wwwOptions);
-});
 app.get('/socket.io-1.3.3.js', function(req, res){
 	res.sendFile('socket.io-1.3.3.js', wwwOptions);
 });
-app.get('/style.css', function(req, res){
-	res.sendFile('style.css', wwwOptions);
+app.get('/main.js', function(req, res){
+	res.sendFile('main.js', wwwOptions);
+});
+app.get('/vlc.player.js', function(req, res){
+	res.sendFile('vlc.player.js', wwwOptions);
+});
+app.get('/html.player.js', function(req, res){
+	res.sendFile('html.player.js', wwwOptions);
+});
+app.get('/gallery.ui.js', function(req, res){
+	res.sendFile('gallery.ui.js', wwwOptions);
+});
+app.get('/gallery.ui.css', function(req, res){
+	res.sendFile('gallery.ui.css', wwwOptions);
 });
 // Resources
 /*var options = { root: __dirname + '/data/' };
