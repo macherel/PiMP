@@ -6,8 +6,8 @@ var http    = require('http').Server(app);
 var path    = require('path');
 var io      = require('socket.io')(http);
 
-var trigger = require('./lib/keyboard-trigger');
-//var trigger = require('./lib/gpio-trigger');
+//var trigger = require('./lib/keyboard-trigger');
+var trigger = require('./lib/gpio-trigger');
 var config = require('./lib/config')
 
 // Handlers
