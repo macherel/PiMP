@@ -8,6 +8,7 @@ var io      = require('socket.io')(http);
 
 var trigger = require('./lib/keyboard-trigger');
 //var trigger = require('./lib/gpio-trigger');
+var config = require('./lib/config')
 
 // Handlers
 app.all('*', function(req, res, next) {
