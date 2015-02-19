@@ -8,9 +8,9 @@ function KeyboardTrigger() {
 	stdin.setRawMode(true);
 	stdin.on('data', function(chunk) {
 		if(chunk=='\3') process.exit();
-		else if(chunk=='a') trigger.emit("trigger", 0);
-		else if(chunk=='z') trigger.emit("trigger", 1);
-		else if(chunk=='e') trigger.emit("trigger", 2);
+		else if(chunk=='a') trigger.emit("trigger", 1);
+		else if(chunk=='z') trigger.emit("trigger", 2);
+		else if(chunk=='e') trigger.emit("trigger", 3);
 	});
 }
 
