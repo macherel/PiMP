@@ -75,5 +75,9 @@
 	//"prototypejs": true,
 	// shelljs global variables.
 	//"shelljs": true
+  },
+  "rules": {
+    // authorize unused parameter
+    "no-unused-vars": [2, {"vars": "all", "args": "none"}]
   }
 }
