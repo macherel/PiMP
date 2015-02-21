@@ -77,7 +77,7 @@
 			p.playlist.clear();
 			videoIds.forEach(function(id) {
 				if (videos[id]) {
-					p.playlist.add(videos[id].url);
+					p.playlist.add(videos[id].url, videos[id].name || "");
 				} else {
 					console.error("video does not exists", id);
 				}
@@ -98,8 +98,9 @@
 			if (videos[id]) {
 				let video = videos[id];
 				console.log("playing video", video);
-				p.playlist.clear();
-				p.playlist.add(video.url);
+				//p.playlist.stop();
+				p.playlist.items.clear();
+				p.playlist.add(video.url, videos[id].name || "");
 			} else {
 				console.error("video does not exists", id);
 				/*
@@ -109,14 +110,17 @@
 				triggerStopped();
 			}
 		}
-		p.playlist.play();
-		/*
-		 * video need to be played for changing fullscreen mode
-		 */
-		p.video.fullscreen = true;
-		/* --- */
-		p.input.position = 0.6; // only for tests ; TO BE REMOVED !!!!!!!!!!!!!!!!!
-		/* --- */
+		if(p.playlist.items.count) {
+			p.playlist.play();
+			/*
+			 * video need to be played for changing fullscreen mode
+			 */
+			p.video.fullscreen = true;
+			/* Only for test ; TODO remove */
+			p.input.position = 0.6;
+			p.audio.mute = true;
+			/* --- */
+		}
 	});
 
 	/**
