@@ -5,19 +5,27 @@
 
 (function() {
 	const GALLERY_ID = "gallery";
+	let g;
 
-	window.addEventListener("pimp:begin", function(event) {
+	/**
+	 *
+	 */
+	window.addEventListener("pimp:begin", function() {
 		if (!document.getElementById("GALLERY_ID")) {
-			let gallery = document.createElement("div");
-			gallery.id = GALLERY_ID;
-			document.appendChild(gallery);
-			// Backup css display property value, after all CSS applied
-			document.getElementById(GALLERY_ID).setAttribute("data-display", document.getElementById(GALLERY_ID).style.display);
+			let galleryTag = document.createElement("div");
+			galleryTag.id = GALLERY_ID;
+			document.body.appendChild(galleryTag);
 		}
+		g = document.getElementById(GALLERY_ID);
+
+		// Backup css display property value, after all CSS applied
+		g.setAttribute("data-display", g.style.display);
 	});
 
-	window.addEventListener("pimp:configure", function(event) {
-		let configuration = event.detail;
+	/**
+	 *
+	 */
+	window.addEventListener("pimp:configure", function({detail: configuration}) {
 		console.log("loading configuration", configuration);
 		if (configuration) {
 			if (configuration.videos) {
@@ -29,6 +37,10 @@
 					description.appendChild(document.createTextNode(video.description));
 					let thumbnail = document.createElement("img");
 					thumbnail.src = video.thumbnail;
+					thumbnail.onclick = function(event) {
+						let id = event.target.parentNode.id;
+						window.dispatchEvent(new CustomEvent("pimp:play", {details:id}));
+					};
 					let container = document.createElement("div");
 					container.id = video.id;
 					container.appendChild(title);
@@ -37,28 +49,25 @@
 					document.getElementById(GALLERY_ID).appendChild(container);
 				});
 			} else {
-				console.log("no video in configuration", configuration.videos);
+				console.warn("no video in configuration", configuration.videos);
 			}
 		} else {
-			console.log("configuration empty", configuration);
+			console.warn("configuration empty", configuration);
 		}
 	});
 
-	window.addEventListener("pimp:play", function (event) {
-		// Hide gallery
-		document.getElementById(GALLERY_ID).style.display = "none";
+	/**
+	 * Hide gallery
+	 */
+	window.addEventListener("pimp:play", function () {
+		g.style.display = "none";
 	});
 
-	window.addEventListener("pimp:stop", function() {
-		//
-	});
-
-	window.addEventListener("pimp:stopped", function(event) {
+	/**
+	 * (Re)Display gallery
+	 */
+	window.addEventListener("pimp:stopped", function () {
 		// Restore css display property value
-		document.getElementById(GALLERY_ID).style.display = document.getElementById(GALLERY_ID).getAttribute("data-display");
-	});
-
-	window.addEventListener("pimp:end", function(event) {
-		//
+		g.style.display = g.getAttribute("data-display");
 	});
 })();
