@@ -18,8 +18,23 @@
 		window.dispatchEvent(new Event("pimp:stopped"));
 	}
 
+	/**
+	 * this code simulate a "normal" playlist.
+	 * Next playlist video is read instead of stopping.
+	 * @param arg dunno
+	 */
+	function nextOrStop(arg) {
+		console.log("nextOrStop", arg);
+		p.playlist.removeItem(0); // Deprecated but no as ease replacement now
+		if(p.playlist.items.count) {
+			p.playlist.play();
+		} else {
+			triggerStopped();
+		}
+	}
+
 	function onVLCError(event) {
-		console.log(event);
+		console.log("VLC has encountered an error", event);
 	}
 
 	/**
@@ -44,8 +59,8 @@
 			document.body.appendChild(playerTag);
 		}
 		p = document.getElementById(PLAYER_ID);
+		p.addEventListener("MediaPlayerEndReached", nextOrStop, false);
 		p.addEventListener("MediaPlayerStopped", triggerStopped, false);
-		p.addEventListener("MediaPlayerEndReached", triggerStopped, false);
 		p.addEventListener("MediaPlayerEncounteredError", onVLCError, false);
 	});
 
@@ -116,10 +131,11 @@
 			 * video need to be played for changing fullscreen mode
 			 */
 			p.video.fullscreen = true;
+
 			/* Only for test ; TODO remove */
 			p.input.position = 0.6;
 			p.audio.mute = true;
-			/* --- */
+			/* / Only for test ; TODO remove */
 		}
 	});
 
@@ -162,7 +178,7 @@
 	 * Remove vlc event listeners.
 	 */
 	window.addEventListener("pimp:end", function() {
-		p.removeEventListener("MediaPlayerEndReached", triggerStopped, false);
+		p.removeEventListener("MediaPlayerEndReached", nextOrStop, false);
 		p.removeEventListener("MediaPlayerStopped", triggerStopped, false);
 		p.removeEventListener("MediaPlayerEncounteredError", onVLCError, false);
 	});
