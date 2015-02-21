@@ -18,6 +18,10 @@
 		window.dispatchEvent(new Event("pimp:stopped"));
 	}
 
+	function onVLCError(event) {
+		console.log(event);
+	}
+
 	/**
 	 * Create embed tag if not exists and set "p" global variable to vlc player
 	 */
@@ -33,6 +37,7 @@
 			playerTag.style.right = "0px";
 			playerTag.setAttribute("autoplay", "false");
 			playerTag.setAttribute("loop", "false"); // default false
+			playerTag.setAttribute("autoloop", "false"); // default false
 			playerTag.setAttribute("controls", "false");
 			playerTag.setAttribute("toolbar", "false"); // alias for controls
 			playerTag.setAttribute("branding", "false"); // vlc logo
@@ -41,6 +46,7 @@
 		p = document.getElementById(PLAYER_ID);
 		p.addEventListener("MediaPlayerStopped", triggerStopped, false);
 		p.addEventListener("MediaPlayerEndReached", triggerStopped, false);
+		p.addEventListener("MediaPlayerEncounteredError", onVLCError, false);
 	});
 
 	/**
@@ -114,6 +120,20 @@
 	});
 
 	/**
+	 * Jump to next video form playlist
+	 */
+	window.addEventListener("pimp:previous", function() {
+		p.playlist.prev();
+	});
+
+	/**
+	 * Jump to previous video from playlist
+	 */
+	window.addEventListener("pimp:next", function() {
+		p.playlist.next();
+	});
+
+	/**
 	 * Pause video playing.
 	 */
 	window.addEventListener("pimp:pause", function() {
@@ -140,6 +160,7 @@
 	window.addEventListener("pimp:end", function() {
 		p.removeEventListener("MediaPlayerEndReached", triggerStopped, false);
 		p.removeEventListener("MediaPlayerStopped", triggerStopped, false);
+		p.removeEventListener("MediaPlayerEncounteredError", onVLCError, false);
 	});
 
 })();

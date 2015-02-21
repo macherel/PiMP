@@ -24,7 +24,7 @@ function sendEvent(name, args) {
  * @param args (optional) use for sendEvent args argument if set
  */
 function bindEvent(name, args) {
-	if(args !== "undefined") {
+	if(typeof args !== "undefined") {
 		return sendEvent.bind(null, name, args);
 	} else {
 		return function(event) {
@@ -70,9 +70,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var socket = io();
 	socket.on("load", bindEvent("load"));
 	socket.on("play", bindEvent("play"));
-	/* for compatibility */
-	socket.on("start", bindEvent("play")); // TODO to remove
-	/* - */
+	socket.on("next", bindEvent("next"));
+	socket.on("previous", bindEvent("previous"));
 	socket.on("pause", bindEvent("pause", undefined));
 	socket.on("stop", bindEvent("stop", undefined));
 });
