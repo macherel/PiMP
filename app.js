@@ -3,7 +3,7 @@
 function loadOptionalModule(module, listModules) {
 	try {
 		var loadedModule = require('./lib/' + module);
-		if(!!listModules) listModules.push(loadedModule);
+		if(!!listModules && !!loadedModule) listModules.push(loadedModule);
 		return loadedModule;
 	} catch(e) {
 		console.log('An error occurs when loading module ' + module + '.', e);
