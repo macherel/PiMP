@@ -11,4 +11,4 @@ Currently, it handle inputs from keyboard or physical button connected to the po
 
 
 Scrum board
-http://scrumy.com/fridaycodingnight
+http://scrumy.com/tedimage38
