@@ -1,10 +1,12 @@
 "use strict";
 
-function loadOptionalModule(module) {
+function loadOptionalModule(module, listModules) {
 	try {
-		return require('./lib/' + module);
+		var loadedModule = require('./lib/' + module);
+		if(!!listModules) listModules.push(loadedModule);
+		return loadedModule;
 	} catch(e) {
-		console.log('An error occurs when loading module ' + module + '. ')
+		console.log('An error occurs when loading module ' + module + '.', e);
 	}
 }
 
@@ -15,8 +17,8 @@ var path    = require('path');
 var io      = require('socket.io')(http);
 
 var triggers = [];
-triggers.push(loadOptionalModule('keyboard-trigger'));
-triggers.push(loadOptionalModule('gpio-trigger'));
+loadOptionalModule('keyboard-trigger', triggers);
+loadOptionalModule('gpio-trigger', triggers);
 var config = require('./lib/config')
 
 // Handlers
@@ -50,7 +52,6 @@ io.on('connection', function(socket){
 
 	for(var i=0; i<triggers.length; i++) {
 		var trigger = triggers[i];
-		if(!trigger) break;
 		trigger.on('trigger', function(id) {
 			console.log("trigger", id);
 			socket.emit('play', id);
