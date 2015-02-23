@@ -1,6 +1,6 @@
-# Tedimage38
+# PiMP
 
-Tedimage38 is a mini media player that can accept different input types.
+PiMP is a mini media player that can accept different input types.
 Its purpose is to allow the video display, simply and faster in some contexts :
   - conferences
   - museums
