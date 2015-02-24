@@ -5,6 +5,16 @@
 let VLCWrapper = (function(){
 	"use strict";
 	const DEBUG = true;
+	const STATES = {
+		"IDLE": 0,
+		"OPENING": 1,
+		"BUFFERING": 2,
+		"PLAYING": 3,
+		"PAUSED": 4,
+		"STOPPING": 5,
+		"ENDED": 6,
+		"ERROR": 7
+	};
 
 	/**
 	 * VLC error event listener
@@ -24,10 +34,12 @@ let VLCWrapper = (function(){
 		console.log("new VLCWrapperClass()", vlc);
 
 		if(typeof vlc === "string") {
-			this.vlc = this.createTag();
-		} else {
+			this.vlc = this.createTag(vlc);
+		} else if(vlc.nodeName === "EMBED") {
 			this.vlc = vlc;
 			this.vlc.playlist.clear();
+		} else {
+			throw new Error("invalid argument");
 		}
 
 		this.playlistEndReachedListeners = [];
@@ -37,13 +49,12 @@ let VLCWrapper = (function(){
 
 		this.videos = [];
 		this.index = -1;
-		this.count = 0;
 	}
 
 	/**
-	 *
-	 * @param id
-	 * @returns {HTMLElement}
+	 * Add an <embed> tag in page body.
+	 * @param id tag id attribute
+	 * @returns {HTMLElement} embed element created
 	 */
 	VLCWrapperClass.prototype.createTag = function(id) {
 		let playerTag = document.createElement("embed");
@@ -72,19 +83,25 @@ let VLCWrapper = (function(){
 		}
 	};
 
+	/**
+	 * Empty playlist
+	 */
 	VLCWrapperClass.prototype.clear = function() {
 		console.log("VLCWrapperClass.", "clear()");
 		this.vlc.playlist.clear();
 		this.index = -1;
-		this.count = 0;
 	};
 
+	/**
+	 * Add a video to playlist according to id from definitions
+	 * @param id video id
+	 * @returns {boolean} true if video added, otherwise false
+	 */
 	VLCWrapperClass.prototype.add = function(id) {
 		console.log("VLCWrapperClass.", "add()", id);
 		if(typeof id === "string" && this.videos[id]) {
 			this.clear();
 			this.vlc.playlist.add(this.videos[id].url, this.videos[id].name || "");
-			this.count = 1;
 			this.index = 0;
 			return true;
 		}
@@ -92,6 +109,11 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * Add videos to playlist according to their ids from definitions
+	 * @param videoIds
+	 * @returns {boolean} true if videos added, otherwise false
+	 */
 	VLCWrapperClass.prototype.addAll = function(videoIds) {
 		console.log("VLCWrapperClass.", "addAll()", videoIds);
 		if(typeof videoIds !== "undefined" && Array.isArray(videoIds)) {
@@ -99,12 +121,11 @@ let VLCWrapper = (function(){
 			videoIds.forEach(function(id) {
 				if (this.videos[id]) {
 					this.vlc.playlist.add(this.videos[id].url, this.videos[id].name || "");
-					this.count++;
 				} else {
 					console.error("video does not exists", id);
 				}
 			}, this);
-			if(this.count) {
+			if(this.vlc.playlist.items.count) {
 				this.index = 0;
 			}
 			return true;
@@ -113,6 +134,10 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * Pause video and return true or return false if can't
+	 * @returns {boolean}
+	 */
 	VLCWrapperClass.prototype.pause = function() {
 		console.log("VLCWrapperClass.", "pause()");
 		if(this.vlc.playlist.isPlaying) {
@@ -122,18 +147,26 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * Stop video and return true or return false if can't
+	 * @returns {boolean}
+	 */
 	VLCWrapperClass.prototype.stop = function() {
 		console.log("VLCWrapperClass.", "stop()");
-		if(this.vlc.playlist.isPlaying) {
+		if(this.inStates(STATES.OPENING, STATES.BUFFERING, STATES.PLAYING, STATES.PAUSED)) {
 			this.vlc.playlist.stop();
 			return true;
 		}
 		return false;
 	};
 
+	/**
+	 * Play current or first playlist video and return true or return false if a video is already currently playing or playlist is empty
+	 * @returns {boolean}
+	 */
 	VLCWrapperClass.prototype.play = function() {
 		console.log("VLCWrapperClass.", "play()");
-		if(!this.vlc.playlist.isPlaying && this.index !== -1) {
+		if(!this.vlc.playlist.isPlaying && !this.isEmpty()) {
 			this.vlc.playlist.play();
 			if(DEBUG) {
 				this.vlc.input.position = 0.6;
@@ -144,6 +177,9 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * INTERNAL FUNCTION. DON'T CALL IT !
+	 */
 	VLCWrapperClass.prototype.continuePlaying = function() {
 		console.log("VLCWrapperClass.", "continuePlaying()");
 		if(!this.isEmpty() && !this.isLast()) {
@@ -159,6 +195,10 @@ let VLCWrapper = (function(){
 		}
 	};
 
+	/**
+	 * Jump to the next playlist video and return true or return false if playlist is empty or current video is the last video of the playlist
+	 * @returns {boolean}
+	 */
 	VLCWrapperClass.prototype.next = function() {
 		console.log("VLCWrapperClass.", "next()");
 		if(!this.isEmpty() && !this.isLast()) {
@@ -173,6 +213,10 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * Jump to the previous playlist video and return true or return false if playlist is empty or current video is the first video of the playlist
+	 * @returns {boolean}
+	 */
 	VLCWrapperClass.prototype.previous = function() {
 		console.log("VLCWrapperClass.", "previous()");
 		if(!this.isEmpty() && !this.isFirst()) {
@@ -187,6 +231,11 @@ let VLCWrapper = (function(){
 		return false;
 	};
 
+	/**
+	 * Change fullscreen state according to parameter and return new fullscreen state
+	 * @param mode true for fullscreen, false otherwise
+	 * @returns {boolean} return true for fullscreen, false otherwise
+	 */
 	VLCWrapperClass.prototype.fullscreen = function(mode) {
 		if(typeof mode === "boolean") {
 			this.vlc.video.fullscreen = mode;
@@ -208,6 +257,9 @@ let VLCWrapper = (function(){
 		}
 	};
 
+	/**
+	 * INTERNAL FUNCTION. DON'T CALL IT !
+	 */
 	VLCWrapperClass.prototype.triggerEventListeners = function(eventName, data) {
 		if(eventName === "stopped") {
 			this.playlistEndReachedListeners.forEach(function(listener) {
@@ -221,7 +273,7 @@ let VLCWrapper = (function(){
 	 * @returns {boolean}
 	 */
 	VLCWrapperClass.prototype.isEmpty = function() {
-		return this.count === 0;
+		return this.vlc.playlist.items.count === 0;
 	};
 
 	/**
@@ -237,7 +289,16 @@ let VLCWrapper = (function(){
 	 * @returns {boolean}
 	 */
 	VLCWrapperClass.prototype.isLast = function() {
-		return this.index + 1 === this.count;
+		return this.index + 1 === this.vlc.playlist.items.count;
+	};
+
+	/**
+	 * Return true if current vlc.input.state is include in states in parameters
+	 * @param states somes states to check
+	 * @returns {boolean}
+	 */
+	VLCWrapperClass.prototype.inStates = function(...states) {
+		return states.indexOf(this.vlc.input.state) != -1;
 	};
 
 	return VLCWrapperClass;
