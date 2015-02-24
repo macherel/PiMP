@@ -7,7 +7,7 @@ Its purpose is to allow the video display, simply and faster in some contexts :
   - trade fairs
   - and more
 
-Currently, it handle inputs from keyboard or physical button connected to the ports of a RaspberryPi (GPIO), but its architecture makes it easy to add almost any type of input.
+Currently, it handle inputs from keyboard or physical buttons connected to the ports of a RaspberryPi (GPIO), but its architecture makes it easy to add almost any type of input.
 
 
 Scrum board
