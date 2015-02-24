@@ -68,6 +68,12 @@
 
 		if(vlcWrapper.play()) {
 			vlcWrapper.fullscreen(true);
+		} else {
+			/*
+			 * video not played. we need to inform other modules
+			 */
+			event.stopImmediatePropagation();
+			triggerStopped();
 		}
 	});
 
