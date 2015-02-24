@@ -7,6 +7,11 @@
 	const GALLERY_ID = "gallery";
 	let g;
 
+	function onClick(event) {
+		let id = event.target.parentNode.id;
+		window.dispatchEvent(new CustomEvent("pimp:play", {detail:id}));
+	}
+
 	/**
 	 *
 	 */
@@ -37,10 +42,7 @@
 					description.appendChild(document.createTextNode(video.description));
 					let thumbnail = document.createElement("img");
 					thumbnail.src = video.thumbnail;
-					thumbnail.onclick = function(event) {
-						let id = event.target.parentNode.id;
-						window.dispatchEvent(new CustomEvent("pimp:play", {details:id}));
-					};
+					thumbnail.onclick = onClick;
 					let container = document.createElement("div");
 					container.id = video.id;
 					container.appendChild(title);

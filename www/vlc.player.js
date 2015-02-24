@@ -8,8 +8,7 @@
 (function() {
 
 	const PLAYER_ID = "player";
-	let p = null;
-	let videos = [];
+	let vlcWrapper = null;
 
 	/**
 	 * Send event "pimp:stopped"
@@ -19,62 +18,23 @@
 	}
 
 	/**
-	 * this code simulate a "normal" playlist.
-	 * Next playlist video is read instead of stopping.
-	 * @param arg dunno
-	 */
-	function nextOrStop(arg) {
-		console.log("nextOrStop", arg);
-		p.playlist.removeItem(0); // Deprecated but no as ease replacement now
-		if(p.playlist.items.count) {
-			p.playlist.play();
-		} else {
-			triggerStopped();
-		}
-	}
-
-	function onVLCError(event) {
-		console.log("VLC has encountered an error", event);
-	}
-
-	/**
-	 * Create embed tag if not exists and set "p" global variable to vlc player
+	 * Create or retrieve VLC tag and create wrapper
 	 */
 	window.addEventListener("pimp:begin", function() {
-		if (!document.getElementById(PLAYER_ID)) {
-			let playerTag = document.createElement("embed");
-			playerTag.id = PLAYER_ID;
-			playerTag.type = "application/x-vlc-plugin";
-			playerTag.width = "1";
-			playerTag.height = "1";
-			playerTag.style.position = "absolute";
-			playerTag.style.top = "0px";
-			playerTag.style.right = "0px";
-			playerTag.setAttribute("autoplay", "false");
-			playerTag.setAttribute("loop", "false"); // default false
-			playerTag.setAttribute("autoloop", "false"); // default false
-			playerTag.setAttribute("controls", "false");
-			playerTag.setAttribute("toolbar", "false"); // alias for controls
-			playerTag.setAttribute("branding", "false"); // vlc logo
-			document.body.appendChild(playerTag);
-		}
-		p = document.getElementById(PLAYER_ID);
-		p.addEventListener("MediaPlayerEndReached", nextOrStop, false);
-		p.addEventListener("MediaPlayerStopped", triggerStopped, false);
-		p.addEventListener("MediaPlayerEncounteredError", onVLCError, false);
+		let vlc = document.getElementById(PLAYER_ID) || PLAYER_ID;
+		vlcWrapper = new VLCWrapper(vlc);
+		vlcWrapper.addEventListener("stopped", triggerStopped);
 	});
 
 	/**
-	 * Fill "videos" array with content of configuration
+	 * Retrieve video definition and pass them to wrapper
 	 */
 	window.addEventListener("pimp:configure", function({detail: configuration}) {
 		console.log("loading configuration", configuration);
+		let videos = [];
 		if (configuration) {
 			if (configuration.videos) {
-				configuration.videos.forEach(function(video) {
-					console.log("adding video", video);
-					videos[video.id] = video;
-				});
+				vlcWrapper.putVideoDefinitions(configuration.videos);
 			} else {
 				console.warn("no video in configuration", configuration.videos);
 			}
@@ -88,18 +48,7 @@
 	 * @param videoIds array of video Ids (from configuration)
 	 */
 	window.addEventListener("pimp:load", function({detail: videoIds}) {
-		if(typeof videoIds !== "undefined" && Array.isArray(videoIds)) {
-			p.playlist.clear();
-			videoIds.forEach(function(id) {
-				if (videos[id]) {
-					p.playlist.add(videos[id].url, videos[id].name || "");
-				} else {
-					console.error("video does not exists", id);
-				}
-			});
-		} else {
-			console.error("param is undefined or not an array", videoIds);
-		}
+		vlcWrapper.addAll(videoIds);
 	});
 
 	/**
@@ -107,35 +56,24 @@
 	 * If id param is set, playlist is cleared and video corresponding to id is add to playlist before playing.
 	 * @param id (optional) a video id
 	 */
-	window.addEventListener("pimp:play", function({detail: id}) {
-		console.log("command play received", id);
-		if(typeof id !== "undefined" && id !== null) {
-			if (videos[id]) {
-				let video = videos[id];
-				console.log("playing video", video);
-				//p.playlist.stop();
-				p.playlist.items.clear();
-				p.playlist.add(video.url, videos[id].name || "");
-			} else {
-				console.error("video does not exists", id);
-				/*
-				 * video not played. we need to inform other modules
-				 */
-				event.stopImmediatePropagation();
-				triggerStopped();
-			}
-		}
-		if(p.playlist.items.count) {
-			p.playlist.play();
+	window.addEventListener("pimp:play", function(event) {
+		let id = event.detail;
+		if (typeof id === "string" && !vlcWrapper.add(id)) {
 			/*
-			 * video need to be played for changing fullscreen mode
+			 * video not played. we need to inform other modules
 			 */
-			p.video.fullscreen = true;
+			event.stopImmediatePropagation();
+			triggerStopped();
+		}
 
-			/* Only for test ; TODO remove */
-			p.input.position = 0.6;
-			p.audio.mute = true;
-			/* / Only for test ; TODO remove */
+		if(vlcWrapper.play()) {
+			vlcWrapper.fullscreen(true);
+		} else {
+			/*
+			 * video not played. we need to inform other modules
+			 */
+			event.stopImmediatePropagation();
+			triggerStopped();
 		}
 	});
 
@@ -143,44 +81,42 @@
 	 * Jump to next video form playlist
 	 */
 	window.addEventListener("pimp:previous", function() {
-		p.playlist.prev();
+		vlcWrapper.previous();
 	});
 
 	/**
 	 * Jump to previous video from playlist
 	 */
 	window.addEventListener("pimp:next", function() {
-		p.playlist.next();
+		vlcWrapper.next();
 	});
 
 	/**
 	 * Pause video playing.
 	 */
 	window.addEventListener("pimp:pause", function() {
-		p.playlist.pause();
+		vlcWrapper.pause();
 	});
 
 	/**
 	 * Stop video playing.
 	 */
 	window.addEventListener("pimp:stop", function() {
-		p.playlist.stop();
+		vlcWrapper.stop();
 	});
 
 	/**
-	 * Exit fullscreeen.
+	 * Exit fullscreen.
 	 */
 	window.addEventListener("pimp:stopped", function() {
-		p.video.fullscreen = false;
+		vlcWrapper.fullscreen(false);
 	});
 
 	/**
 	 * Remove vlc event listeners.
 	 */
 	window.addEventListener("pimp:end", function() {
-		p.removeEventListener("MediaPlayerEndReached", nextOrStop, false);
-		p.removeEventListener("MediaPlayerStopped", triggerStopped, false);
-		p.removeEventListener("MediaPlayerEncounteredError", onVLCError, false);
+		vlcWrapper.removeEventListener("stopped", triggerStopped);
 	});
 
 })();
