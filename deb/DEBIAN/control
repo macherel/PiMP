@@ -1,0 +1,20 @@
+Package: pimp
+Version: 0.1
+Section: video
+Maintainer: Pierre-Marie Dhaussy <pihemde+pimp@gmail.com>
+Homepage: https://github.com/macherel/PiMP
+Priority: optional
+Architecture: all
+Depends: node (>=0.12)
+Recommends: firefox | iceweasel
+Description: Mini multimedia player for embeded systems
+ PiMP is a mini media player that can accept different input types.
+ Its purpose is to allow the video display, simply and faster in some contexts :
+   conferences
+   museums
+   trade fairs
+   and more
+ Currently, it handle inputs from keyboard or physical buttons connected to the ports of a
+ RaspberryPi (GPIO), but its architecture makes it easy to add almost any type of input.
+
+

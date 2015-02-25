@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# data are store in /usr/share
+#ln -s /usr/share/pimp data
+
+# downloading npm libs
+cd /usr/lib/pimp/
+npm install
