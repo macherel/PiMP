@@ -6,7 +6,7 @@ Homepage: https://github.com/macherel/PiMP
 Priority: optional
 Architecture: all
 Depends: node (>=0.12)
-Recommends: firefox | iceweasel
+Recommends: firefox (>=13) | iceweasel (>=13)
 Description: Mini multimedia player for embeded systems
  PiMP is a mini media player that can accept different input types.
  Its purpose is to allow the video display, simply and faster in some contexts :

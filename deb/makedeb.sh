@@ -10,28 +10,35 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-# copy deb structure
-cp -R $SRC_ROOT/deb/DEBIAN $TMP_DIR/
-cp -R $SRC_ROOT/deb/etc $TMP_DIR/
-cp -R $SRC_ROOT/deb/usr $TMP_DIR/
+# DEBIAN
+mkdir $TMP_DIR/DEBIAN
+cp control $TMP_DIR/DEBIAN
+cp postinst $TMP_DIR/DEBIAN
+chmod 755 $TMP_DIR/DEBIAN/postinst
 
 # etc
+mkdir $TMP_DIR/etc
 cp $SRC_ROOT/data/configuration.json $TMP_DIR/etc/pimp.json
 
-# lib
+# usr/bin
+mkdir -p $TMP_DIR/usr/bin
+cp pimp $TMP_DIR/usr/bin
+chmod 755 $TMP_DIR/usr/bin/pimp
+
+# usr/lib
+mkdir -p $TMP_DIR/usr/lib/pimp
 cp $SRC_ROOT/*.js $TMP_DIR/usr/lib/pimp
 cp -R $SRC_ROOT/lib $TMP_DIR/usr/lib/pimp
 cp -R $SRC_ROOT/www $TMP_DIR/usr/lib/pimp
+ln -s $TMP_DIR/usr/share/pimp $TMP_DIR/usr/lib/pimp/data
 
-# share
+# usr/share
+mkdir -p $TMP_DIR/usr/share/pimp
 cp $SRC_ROOT/data/* $TMP_DIR/usr/share/pimp
 rm $TMP_DIR/usr/share/pimp/configuration.json
-
-
-# cd $TMP_DIR
+ln -s $TMP_DIR/etc/pimp.json $TMP_DIR/usr/share/pimp/configuration.json
 
 # make deb
-
-# mv pimp_????.deb
+dpkg-deb -b $TMP_DIR $SRC_ROOT
 
 # rm -Rf $TMP_DIR
