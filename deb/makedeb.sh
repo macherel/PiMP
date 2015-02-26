@@ -10,6 +10,10 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
+##
+# Creating structure
+##
+
 # DEBIAN
 mkdir $TMP_DIR/DEBIAN
 cp control $TMP_DIR/DEBIAN
@@ -38,7 +42,14 @@ cp $SRC_ROOT/data/* $TMP_DIR/usr/share/pimp
 rm $TMP_DIR/usr/share/pimp/configuration.json
 ln -s $TMP_DIR/etc/pimp.json $TMP_DIR/usr/share/pimp/configuration.json
 
+##
+# Creating deb file
+##
+
 # make deb
 dpkg-deb -b $TMP_DIR $SRC_ROOT
 
-# rm -Rf $TMP_DIR
+##
+# remove temporary files
+##
+rm -Rf $TMP_DIR
