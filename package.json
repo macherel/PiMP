@@ -1,7 +1,17 @@
 {
-  "name": "Tedimage38",
+  "name": "PiMP",
   "version": "0.0.1",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/macherel/pimp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/macherel/pimp/issues"
+  },
+  "engines": {
+    "node": ">= 0.12.0"
+  },
   "scripts": {
     "start": "node ./app",
     "lint": "eslint ."
@@ -12,6 +22,8 @@
     "socket.io": "^1.3.3"
   },
   "devDependencies": {
-    "eslint": "^0.14.1"
+    "eslint": "^0.14.1",
+    "grunt": "~0.4.5",
+    "grunt-debian-package": "^0.1.10"
   }
 }
