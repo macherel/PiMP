@@ -88,6 +88,7 @@ let VLCWrapper = (function(){
 	 */
 	VLCWrapperClass.prototype.clear = function() {
 		console.log("VLCWrapperClass.", "clear()");
+		this.vlc.playlist.stop();
 		this.vlc.playlist.clear();
 		this.index = -1;
 	};
