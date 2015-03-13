@@ -16,7 +16,7 @@
 	 *
 	 */
 	window.addEventListener("pimp:begin", function() {
-		if (!document.getElementById("GALLERY_ID")) {
+		if (!document.getElementById(GALLERY_ID)) {
 			let galleryTag = document.createElement("div");
 			galleryTag.id = GALLERY_ID;
 			document.body.appendChild(galleryTag);
