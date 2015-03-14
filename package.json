@@ -24,6 +24,6 @@
   "devDependencies": {
     "eslint": "^0.14.1",
     "grunt": "~0.4.5",
-    "grunt-debian-package": "^0.1.10"
+    "grunt-debian-package": "~0.1.11"
   }
 }

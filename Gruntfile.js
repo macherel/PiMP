@@ -47,49 +47,51 @@ module.exports = function(grunt) {
 				],
 				"dependencies": "node (>=0.12)"
 			},
-			"files": [
-			/**
-			 * etc
-			 */
-				{
-					"src": "data/configuration.js",
-					"dest": "/etc/${name}.json"
-				},
-			/**
-			 * bin
-			 */
-				{
-					"src": "deb/{name}",
-					"dest": "/usr/bin/"
-				},
-			/**
-			 * lib
-			 */
-				{
-					"src": "app.js",
-					"dest": "/usr/lib/{name}/"
-				},
-				{
-					"src": "lib/*.js",
-					"dest": "/usr/lib/{name}/lib/"
-				},
-				{
-					"cwd": "www",
-					"src": [
-						"*.html",
-						"*.css",
-						"*.js"
-					],
-					"dest": "/usr/lib/{name}/www/"
-				},
-			/**
-			 * share
-			 */
-				{
-					"src": "data/*",
-					"dest": "/usr/share/{name}/"
-				}
-			]
+			"files": {
+				"files": [
+					/**
+					 * etc
+					 */
+					{
+						"src": "data/configuration.js",
+						"dest": "/etc/${name}.json"
+					},
+					/**
+					 * bin
+					 */
+					{
+						"src": "deb/{name}",
+						"dest": "/usr/bin/"
+					},
+					/**
+					 * lib
+					 */
+					{
+						"src": "app.js",
+						"dest": "/usr/lib/{name}/"
+					},
+					{
+						"src": "lib/*.js",
+						"dest": "/usr/lib/{name}/lib/"
+					},
+					{
+						"cwd": "www",
+						"src": [
+							"*.html",
+							"*.css",
+							"*.js"
+						],
+						"dest": "/usr/lib/{name}/www/"
+					},
+					/**
+					 * share
+					 */
+					{
+						"src": "data/*",
+						"dest": "/usr/share/{name}/"
+					}
+				]
+			}
 		}
 	});
 
